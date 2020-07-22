@@ -79,6 +79,15 @@ type Action =
     }
 }
 | {
+    type: 'MOVE_TASK',
+    payload: {
+        dragIndex: number,
+        hoverIndex: number,
+        sourceColumn: string,
+        targetColumn: string,
+    }
+}
+| {
     type: 'SET_DRAGGED_ITEM';
     payload: DragItem | undefined;
 }
@@ -104,13 +113,22 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
             return {...state};
         }
         case 'MOVE_LIST': {
-            console.log('move');
             const {dragIndex, hoverIndex} = action.payload;
             state.lists = moveItem(state.lists, dragIndex, hoverIndex);
             return {...state};
         }
         case 'SET_DRAGGED_ITEM': {
             return {...state, draggedItem: action.payload};
+        }
+        case 'MOVE_TASK': {
+            const {dragIndex, hoverIndex, sourceColumn, targetColumn} = action.payload;
+            // move task
+            const sourceIdx = findItemIndexById(state.lists, sourceColumn);
+            const targetIdx = findItemIndexById(state.lists, targetColumn);
+            const item = state.lists[sourceIdx].tasks.splice(dragIndex, 1)[0];
+            state.lists[targetIdx].tasks.splice(hoverIndex, 0, item);
+            //
+            return {...state};
         }
         default: {
             return state;
