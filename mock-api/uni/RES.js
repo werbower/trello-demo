@@ -4,6 +4,11 @@ const file = path.join(__dirname, 'data.json');
 
 let myData = [];
 
+let raw = fs.readFileSync(file);
+let o = JSON.parse(raw);
+if (o && Array.isArray(o.lists)) {
+    myData = o;
+}
 
 exports.save = (value) => {
     myData = value;
