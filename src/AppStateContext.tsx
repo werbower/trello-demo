@@ -4,6 +4,7 @@ import { findItemIndexById } from './utils/findItemIndexById';
 import { moveItem } from './utils/moveItem';
 import { DragItem } from './DragItem';
 import { save } from './api';
+import { withData } from './withData';
 
 interface Task {
     id: string;
@@ -49,8 +50,9 @@ interface AppStateContextProps {
 
 const AppStateContext = createContext<AppStateContextProps>({} as AppStateContextProps);
 
-export const AppStateProvider = ({children}: React.PropsWithChildren<{}>) => {
-    const [state, dispatch] = useReducer(appStateReducer, appData);
+export const AppStateProvider = withData(
+({children, initialState}: React.PropsWithChildren<{initialState: AppState}>) => {
+    const [state, dispatch] = useReducer(appStateReducer, initialState);
 
     useEffect(() => {
         save(state);
@@ -61,7 +63,7 @@ export const AppStateProvider = ({children}: React.PropsWithChildren<{}>) => {
             {children}
         </AppStateContext.Provider>
     );
-}
+})
 
 export const useAppState = () => {
     return useContext(AppStateContext);
@@ -104,7 +106,7 @@ const appStateReducer = (state: AppState, action: Action): AppState => {
             return {
                 ...state,
                 lists: [
-                    ...state.lists,
+                    ...(state.lists || []),
                     {id: uuid(), text: action.payload, tasks: []}
                 ]
             };

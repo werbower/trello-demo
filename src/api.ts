@@ -4,7 +4,7 @@ const endpoint = process.env.REACT_APP_BACKEND_ENDPOINT || '';
 
 export const save = (payload: AppState) => {
 
-    return fetch(`${endpoint}/save`, {
+    return fetch(`${endpoint}/uni`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -19,7 +19,7 @@ export const save = (payload: AppState) => {
 }
 
 export const load = () => {
-    return fetch(`/load`)
+    return fetch(`${endpoint}/uni`)
     .then((response) => {
         return response.json() as Promise<AppState>;
     });
